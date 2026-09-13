@@ -1,0 +1,142 @@
+# Default values for ecom-frontend.
+# Environment overlays: values-dev.yaml, values-staging.yaml, values-prod.yaml
+
+replicaCount: 1
+
+fullnameOverride: ecom-frontend
+nameOverride: ""
+
+image:
+  repository: ghcr.io/himansusekharsahoo/ecom
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+
+serviceAccount:
+  create: true
+  automount: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: ecom.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 20
+  periodSeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+app:
+  nodeEnv: production
+  extraEnv: []
+
+# Used when postgres.enabled is false.
+database:
+  url: ""
+
+# Used when redis.enabled is false.
+cache:
+  url: ""
+
+secret:
+  # Create a Secret with DATABASE_URL and REDIS_URL.
+  # Disable this in prod and point at an existing Secret instead.
+  create: true
+  existingSecret: ""
+
+postgres:
+  enabled: true
+  image:
+    repository: postgres
+    tag: "16"
+    pullPolicy: IfNotPresent
+  auth:
+    username: postgres
+    password: postgres
+    database: ecom
+  service:
+    port: 5432
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: ""
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+redis:
+  enabled: true
+  image:
+    repository: redis
+    tag: "7"
+    pullPolicy: IfNotPresent
+  service:
+    port: 6379
+  persistence:
+    enabled: false
+    size: 1Gi
+    storageClass: ""
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+volumes: []
+volumeMounts: []
+nodeSelector: {}
+tolerations: []
+affinity: {}

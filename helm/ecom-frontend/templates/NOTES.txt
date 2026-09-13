@@ -1,0 +1,22 @@
+ecom-frontend is installed as release {{ .Release.Name }} in namespace {{ .Release.Namespace }}.
+
+1. Frontend service: {{ include "ecom-frontend.fullname" . }}:{{ .Values.service.port }}
+   Image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+{{- if .Values.postgres.enabled }}
+2. Postgres: {{ include "ecom-frontend.postgres.fullname" . }}:{{ .Values.postgres.service.port }}
+{{- end }}
+{{- if .Values.redis.enabled }}
+3. Redis: {{ include "ecom-frontend.redis.fullname" . }}:{{ .Values.redis.service.port }}
+{{- end }}
+
+{{- if .Values.ingress.enabled }}
+Browse the app at:
+{{- range .Values.ingress.hosts }}
+  http://{{ .host }}
+{{- end }}
+
+Add the host to your machine hosts file, pointing at the ingress controller.
+{{- end }}
+
+Watch the rollout:
+  kubectl rollout status deployment/{{ include "ecom-frontend.fullname" . }} -n {{ .Release.Namespace }}

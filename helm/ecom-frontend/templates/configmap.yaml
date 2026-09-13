@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ecom-frontend.configMapName" . }}
+  labels:
+    {{- include "ecom-frontend.labels" . | nindent 4 }}
+data:
+  NODE_ENV: {{ .Values.app.nodeEnv | quote }}
+  PORT: {{ .Values.service.targetPort | quote }}

@@ -1,0 +1,44 @@
+# Local / k3d. Matches ecom/deployment and ecom/docker-compose.yml.
+
+replicaCount: 2
+
+image:
+  repository: ecom-frontend-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: dev.ecommerce.local
+      paths:
+        - path: /
+          pathType: Prefix
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+
+app:
+  nodeEnv: production
+
+secret:
+  create: true
+
+postgres:
+  enabled: true
+  auth:
+    username: postgres
+    password: postgres
+    database: ecom
+
+redis:
+  enabled: true
