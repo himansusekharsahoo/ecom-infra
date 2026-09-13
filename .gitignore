@@ -1,7 +1,0 @@
-*.tgz
-.DS_Store
-.idea/
-.vscode/
-*.swp
-charts/**/charts/
-!charts/**/charts/.gitkeep
